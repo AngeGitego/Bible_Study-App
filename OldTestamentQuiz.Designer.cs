@@ -1,4 +1,4 @@
-﻿namespace Bible_Study_App
+namespace Bible_Study_App
 {
     partial class OldTestamentQuiz
     {
@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(OldTestamentQuiz));
             lblQuestion = new Label();
             lblFeedback = new Label();
@@ -37,6 +38,9 @@
             rbtnOption4 = new RadioButton();
             btnNext = new Button();
             btnSubmit = new Button();
+            Timer = new System.Windows.Forms.Timer(components);
+            lblTimer = new Label();
+            progressBar = new ProgressBar();
             SuspendLayout();
             // 
             // lblQuestion
@@ -123,7 +127,7 @@
             // 
             // btnSubmit
             // 
-            btnSubmit.BackColor = Color.Red;
+            btnSubmit.BackColor = Color.Teal;
             btnSubmit.Enabled = false;
             btnSubmit.Font = new Font("Gill Sans Ultra Bold", 11F, FontStyle.Regular, GraphicsUnit.Point);
             btnSubmit.ForeColor = SystemColors.ActiveCaptionText;
@@ -136,6 +140,31 @@
             btnSubmit.UseVisualStyleBackColor = false;
             btnSubmit.Click += btnSubmit_Click;
             // 
+            // Timer
+            // 
+            Timer.Interval = 1000;
+            Timer.Tick += Timer_Tick;
+            // 
+            // lblTimer
+            // 
+            lblTimer.AutoSize = true;
+            lblTimer.BackColor = Color.Black;
+            lblTimer.Font = new Font("Cooper Black", 28F, FontStyle.Regular, GraphicsUnit.Point);
+            lblTimer.ForeColor = Color.Red;
+            lblTimer.Location = new Point(672, 11);
+            lblTimer.Name = "lblTimer";
+            lblTimer.Size = new Size(398, 64);
+            lblTimer.TabIndex = 9;
+            lblTimer.Text = "Time Left: 10";
+            // 
+            // progressBar
+            // 
+            progressBar.Location = new Point(26, 461);
+            progressBar.Name = "progressBar";
+            progressBar.Size = new Size(375, 34);
+            progressBar.TabIndex = 10;
+            progressBar.Click += UpdateProgressBar;
+            // 
             // OldTestamentQuiz
             // 
             AutoScaleDimensions = new SizeF(14F, 26F);
@@ -143,7 +172,9 @@
             BackColor = Color.SaddleBrown;
             BackgroundImage = (Image)resources.GetObject("$this.BackgroundImage");
             BackgroundImageLayout = ImageLayout.Stretch;
-            ClientSize = new Size(1120, 468);
+            ClientSize = new Size(1120, 539);
+            Controls.Add(progressBar);
+            Controls.Add(lblTimer);
             Controls.Add(btnSubmit);
             Controls.Add(btnNext);
             Controls.Add(rbtnOption4);
@@ -173,5 +204,8 @@
         private RadioButton rbtnOption4;
         private Button btnNext;
         private Button btnSubmit;
+        private System.Windows.Forms.Timer Timer;
+        private Label lblTimer;
+        private ProgressBar progressBar;
     }
 }
