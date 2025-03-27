@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Media;  // Required for playing sounds
 using System.Windows.Forms;
 
 namespace Bible_Study_App
@@ -10,25 +11,59 @@ namespace Bible_Study_App
         private List<Question> questions;
         private int currentQuestionIndex = 0;
         private int score = 0;
+        private int timeLeft = 10; // Time per question in seconds
+        private SoundPlayer timeoutSound; // Sound effect for timeout
 
         public OldTestamentQuiz()
         {
             InitializeComponent();
             LoadQuestions();
+            InitializeTimer();  // Initialize the timer
             DisplayQuestion();
         }
 
+        private void InitializeTimer()
+        {
+            Timer = new System.Windows.Forms.Timer();
+            Timer.Interval = 1000; // 1 second interval
+            Timer.Tick += Timer_Tick;
+
+            // Load the default Windows error sound for timeout
+            timeoutSound = new SoundPlayer(); // Initialize SoundPlayer (optional)
+
+        }
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            timeLeft--;
+            lblTimer.Text = $"Time Left: {timeLeft}s";
+
+            if (timeLeft <= 0)
+            {
+                Timer.Stop();
+                SystemSounds.Exclamation.Play(); // Play system sound when time runs out
+
+                MessageBox.Show("Time's up! Moving to the next question.", "Timeout", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                lblFeedback.Text = $"Time's up! The correct answer is: {questions[currentQuestionIndex].Options[questions[currentQuestionIndex].CorrectAnswerIndex]}";
+                lblFeedback.ForeColor = Color.Red;
+                lblFeedback.Visible = true;
+
+                btnSubmit.Enabled = false;
+                btnNext.Enabled = true;
+            }
+        }
         private void LoadQuestions()
         {
             questions = new List<Question>
-            {
-                new Question("Who led the Israelites out of Egypt?", new[] { "Moses", "Abraham", "Noah", "David" }, 0),
-                new Question("What is the first book of the Old Testament?", new[] { "Exodus", "Genesis", "Leviticus", "Numbers" }, 1),
-                new Question("Who was swallowed by a great fish?", new[] { "Elijah", "Jonah", "Daniel", "Isaiah" }, 1),
-                new Question("Who built the ark?", new[] { "Moses", "Noah", "Elijah", "Solomon" }, 1),
-                new Question("Which king built the first temple in Jerusalem?", new[] { "David", "Solomon", "Saul", "Hezekiah" }, 1),
-                new Question("Who received the Ten Commandments?", new[] { "Moses", "Joshua", "Aaron", "Isaiah" }, 0)
-            };
+        {
+            new Question("Who led the Israelites out of Egypt?", new[] { "Moses", "Abraham", "Noah", "David" }, 0),
+            new Question("What is the first book of the Old Testament?", new[] { "Exodus", "Genesis", "Leviticus", "Numbers" }, 1),
+            new Question("Who was swallowed by a great fish?", new[] { "Elijah", "Jonah", "Daniel", "Isaiah" }, 1),
+            new Question("Who built the ark?", new[] { "Moses", "Noah", "Elijah", "Solomon" }, 1),
+            new Question("Which king built the first temple in Jerusalem?", new[] { "David", "Solomon", "Saul", "Hezekiah" }, 1),
+            new Question("Who received the Ten Commandments?", new[] { "Moses", "Joshua", "Aaron", "Isaiah" }, 0)
+        };
         }
 
         private void DisplayQuestion()
@@ -52,6 +87,11 @@ namespace Bible_Study_App
                 lblFeedback.Text = "";
                 lblFeedback.Visible = false;
 
+                // Reset Timer
+                timeLeft = 10;
+                lblTimer.Text = $"Time Left: {timeLeft}s";
+                Timer.Start();
+
                 // Enable Submit, Disable Next
                 btnSubmit.Enabled = true;
                 btnNext.Enabled = false;
@@ -65,6 +105,8 @@ namespace Bible_Study_App
         private void btnSubmit_Click(object sender, EventArgs e)
         {
             if (currentQuestionIndex >= questions.Count) return;
+
+            Timer.Stop(); // Stop the timer when the user submits an answer
 
             var question = questions[currentQuestionIndex];
 
@@ -97,6 +139,9 @@ namespace Bible_Study_App
             // Disable Submit & Enable Next
             btnSubmit.Enabled = false;
             btnNext.Enabled = true;
+
+            // Update the progress bar
+            UpdateProgressBar();
         }
 
         private void btnNext_Click(object sender, EventArgs e)
@@ -111,10 +156,21 @@ namespace Bible_Study_App
             {
                 ShowResults();
             }
+
+            // Update the progress bar
+            UpdateProgressBar();
         }
+
+        private void UpdateProgressBar()
+        {
+            // Set the progress value based on the current question index
+            progressBar.Value = (int)((float)currentQuestionIndex / questions.Count * 100);
+        }
+
 
         private void ShowResults()
         {
+            Timer.Stop(); // Stop the timer at the end
             DialogResult result = MessageBox.Show(
                 $"Quiz Completed!\nScore: {score}/{questions.Count} ({(score * 100) / questions.Count}%)\n\nWould you like to retake the quiz?",
                 "Results", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
@@ -148,7 +204,11 @@ namespace Bible_Study_App
             btnSubmit.Enabled = true;  // Ensure Submit is enabled at start
             btnNext.Enabled = false;   // Next should be disabled initially
         }
-    }
 
-   
+        private void UpdateProgressBar(object sender, EventArgs e)
+        {
+            // Set the progress value based on the current question index
+            progressBar.Value = (int)((float)currentQuestionIndex / questions.Count * 100);
+        }
+    }
 }
