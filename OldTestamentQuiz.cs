@@ -1,11 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Media;  // Required for playing sounds
+using System.Media;  
 using System.Windows.Forms;
 
 namespace Bible_Study_App
 {
+    /// <summary>
+    /// Represents the Old Testament Quiz form in the Bible Study App.
+    /// </summary>
+    /// <remarks>
+    /// This class manages the quiz by handling question loading, timing, user input, and score tracking.
+    /// </remarks>
     public partial class OldTestamentQuiz : Form
     {
         private List<Question> questions;
@@ -14,6 +20,13 @@ namespace Bible_Study_App
         private int timeLeft = 10; // Time per question in seconds
         private SoundPlayer timeoutSound; // Sound effect for timeout
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OldTestamentQuiz"/> class.
+        /// </summary>
+        /// <remarks>
+        /// This constructor initializes the UI components, loads quiz questions, starts the timer, and displays the first question.
+        /// </remarks>
+        
         public OldTestamentQuiz()
         {
             InitializeComponent();
@@ -21,6 +34,7 @@ namespace Bible_Study_App
             InitializeTimer();  // Initialize the timer
             DisplayQuestion();
         }
+        // Initializes the timer for quiz countdown and loads the timeout sound.
 
         private void InitializeTimer()
         {
@@ -29,9 +43,11 @@ namespace Bible_Study_App
             Timer.Tick += Timer_Tick;
 
             // Load the default Windows error sound for timeout
-            timeoutSound = new SoundPlayer(); // Initialize SoundPlayer (optional)
+            timeoutSound = new SoundPlayer(); // Initialize SoundPlayer 
 
         }
+
+        // Handles the timer tick event, updating the countdown and handling timeouts.
 
         private void Timer_Tick(object sender, EventArgs e)
         {
@@ -53,6 +69,9 @@ namespace Bible_Study_App
                 btnNext.Enabled = true;
             }
         }
+        
+        // Loads the list of quiz questions.
+       
         private void LoadQuestions()
         {
             questions = new List<Question>
@@ -65,6 +84,8 @@ namespace Bible_Study_App
             new Question("Who received the Ten Commandments?", new[] { "Moses", "Joshua", "Aaron", "Isaiah" }, 0)
         };
         }
+
+        // Displays the current quiz question and resets UI elements.
 
         private void DisplayQuestion()
         {
@@ -101,6 +122,8 @@ namespace Bible_Study_App
                 ShowResults();
             }
         }
+
+        // Handles the submit button click event to validate the answer and update the score.
 
         private void btnSubmit_Click(object sender, EventArgs e)
         {
@@ -144,6 +167,8 @@ namespace Bible_Study_App
             UpdateProgressBar();
         }
 
+        // Handles the next button click event to display the next question or show results.
+
         private void btnNext_Click(object sender, EventArgs e)
         {
             currentQuestionIndex++;
@@ -168,6 +193,7 @@ namespace Bible_Study_App
         }
 
 
+        // Displays the quiz results and allows the user to retake the quiz.
         private void ShowResults()
         {
             Timer.Stop(); // Stop the timer at the end
@@ -184,6 +210,9 @@ namespace Bible_Study_App
                 this.Close();
             }
         }
+
+
+        // Resets the quiz for a new attempt.
 
         private void RetakeQuiz()
         {
